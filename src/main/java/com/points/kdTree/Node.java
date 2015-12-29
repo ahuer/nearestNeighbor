@@ -7,6 +7,7 @@ public class Node {
 	private BigDecimal x;
 	private BigDecimal y;
 	private BigDecimal splitValue;
+	private BigDecimal distance;
 	
 	private String splitAxis;
 	
@@ -19,6 +20,13 @@ public class Node {
 		this.x = x;
 		this.y = y;
 	}
+	
+	public Node(BigDecimal x, BigDecimal y, BigDecimal distance) {
+		this.x = x;
+		this.y = y;
+		this.distance = distance;
+	}
+	
 	public Node(String splitAxis, BigDecimal splitValue) {
 		this.splitAxis = splitAxis;
 		this.splitValue = splitValue;
@@ -29,6 +37,10 @@ public class Node {
 	}
 	public BigDecimal getY() {
 		return y;
+	}
+	
+	public BigDecimal getDistance() {
+		return distance;
 	}
 	
 	public String getSplitAxis() {
@@ -55,6 +67,44 @@ public class Node {
 		this.rightChild = rightChild;
 	}
 	
+	public boolean equals(Node other) {
+		if (! ((this.getSplitAxis().compareTo(other.getSplitAxis()) == 0 &&
+			this.getSplitValue().compareTo(other.getSplitValue()) == 0 ))) {
+			return false;
+		}
+		
+		boolean nullLeft = false;
+		boolean nullRight = false;
+		
+		if (this.getLeftChild().getSplitValue() == null ) {
+			if (! (other.getLeftChild().getSplitValue() == null) ) {
+				return false;
+			}
+			nullLeft = true;
+		}
+		
+		if (this.getRightChild().getSplitValue() == null ) {
+			if (! (other.getRightChild().getSplitValue() == null) ) {
+				return false;
+			}
+			nullRight = true;
+		}
+		
+		if (!nullLeft ) {
+			if (this.getLeftChild().getSplitValue().compareTo(other.getLeftChild().getSplitValue()) != 0 ) {
+				return false;
+			}
+		}
+		
+		if (!nullRight ) {
+			if (this.getRightChild().getSplitValue().compareTo(other.getRightChild().getSplitValue()) != 0 ) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
 	public int compareTo(Node other) throws ClassCastException {
 		return this.compareTo(other);
 	}
@@ -75,6 +125,15 @@ public class Node {
 			BigDecimal secondY = ((Node)other).getY();
 			return firstY.compareTo(secondY);
 		}		
+	};
+	
+	public static Comparator distComparator = new Comparator<Object>() {
+		@Override
+		public int compare(Object node, Object other) {
+			BigDecimal firstDist = ((Node)node).getDistance();
+			BigDecimal secondDist = ((Node)other).getDistance();
+			return secondDist.compareTo(firstDist);
+		}
 	};
 	
 }
