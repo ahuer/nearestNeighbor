@@ -31,9 +31,11 @@ public class NearestNeighbor {
 			return nearestNeighbors;
 		}
 		
+		boolean leftSearched = false;
 		if ("x".equals(currentNode.getSplitAxis())) {
 			if(user.getX().compareTo(currentNode.getSplitValue()) < 1  && currentNode.getLeftChild() != null ) {
 				neighborSearch(user, currentNode.getLeftChild(), topNode);
+				leftSearched = true;
 			} 
 			
 			if(user.getX().compareTo(currentNode.getSplitValue()) > 0  && currentNode.getRightChild() != null ) {
@@ -42,6 +44,7 @@ public class NearestNeighbor {
 		} else {
 			if(user.getY().compareTo(currentNode.getSplitValue()) < 1  && currentNode.getLeftChild() != null ) {
 				neighborSearch(user, currentNode.getLeftChild(), topNode);
+				leftSearched = true;
 			} 
 			
 			if(user.getY().compareTo(currentNode.getSplitValue()) > 0  && currentNode.getRightChild() != null ) {
@@ -49,15 +52,7 @@ public class NearestNeighbor {
 			} 
 		}
 		
-		if (nearestNeighbors.isEmpty() ) {
-			return nearestNeighbors;
-		}
-		
-		if (!currentNode.equals(topNode) ) {
-			return nearestNeighbors;
-		}
-		
-		traverseTopNodeOtherChild(user, topNode);
+		traverseOtherChild(user, currentNode, leftSearched);
 		
 		return nearestNeighbors;
 	}
@@ -80,12 +75,16 @@ public class NearestNeighbor {
 		}
 	}
 	
-	private void traverseTopNodeOtherChild(Node user, Node topNode) {
+	private void traverseOtherChild(Node user, Node topNode, boolean goRight) {
+		if (nearestNeighbors.isEmpty() ) {
+			return;
+		}
+		
 		BigDecimal largestDistance = nearestNeighbors.peek().getDistance();
 		BigDecimal centerDistance = topNode.getSplitValue().subtract(user.getX()).pow(2);
 		
 		if (centerDistance.compareTo(largestDistance) < 0 ) {
-			if (nearestNeighbors.peek().getX().compareTo(topNode.getSplitValue()) < 1 ) {
+			if (goRight ) {
 				neighborSearch(user, topNode.getRightChild(), topNode);
 			} else {
 				neighborSearch(user, topNode.getLeftChild(), topNode);
